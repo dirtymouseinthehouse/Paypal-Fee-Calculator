@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Payment Calculator</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 50px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            transition: background 0.5s ease;
+        }
+
+        h2 {
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Input & Button Styling */
+        input, button {
+            margin: 10px;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            transition: 0.3s ease;
+        }
+
+        input {
+            width: 250px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        button {
+            background: #ff6f61;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background: #ff3d3d;
+            transform: scale(1.05);
+        }
+
+        /* Result Box */
+        #result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: 0.5s ease-in-out;
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            background: linear-gradient(135deg, #0f2027, #203a43);
+        }
+
+        .dark-mode button {
+            background: #f39c12;
+        }
+
+        .dark-mode button:hover {
+            background: #e67e22;
+        }
+
+        /* Dark Mode Toggle */
+        .toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .toggle-btn {
+            background: white;
+            color: black;
+            font-size: 14px;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            background: yellow;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Dark Mode Toggle -->
+    <div class="toggle-container">
+        <button class="toggle-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+    </div>
+
+    <h2>Client Payment Calculator</h2>
+
+    <label>USD Amount You Need:</label>
+    <input type="number" id="usdAmount" placeholder="Enter amount in USD" required><br>
+
+    <label>Piggyback Fee (if any):</label>
+    <input type="number" id="unpaidFee" placeholder="Enter unpaid fee in USD"><br>
+
+    <label>Exchange Rate (USD to INR):</label>
+    <input type="number" id="exchangeRate" placeholder="Enter exchange rate" required><br>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div id="result"></div>
+
+    <script>
+        function calculate() {
+            let usdAmount = parseFloat(document.getElementById("usdAmount").value);
+            let unpaidFee = parseFloat(document.getElementById("unpaidFee").value) || 0;
+            let exchangeRate = parseFloat(document.getElementById("exchangeRate").value);
+
+            let paypalFeeRate = 0.0377; // 3.77% PayPal fee (split)
+            let conversionFeeRate = 0.0189; // 1.89% Conversion fee (split)
+
+            let paypalFee = usdAmount * paypalFeeRate;
+            let conversionFee = usdAmount * conversionFeeRate;
+            let totalCharge = usdAmount + paypalFee + conversionFee + unpaidFee;
+            let inrReceived = usdAmount * exchangeRate;
+
+            let resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = `
+                ✅ <b>USD Needed:</b> $${usdAmount.toFixed(2)}<br>
+                💰 <b>PayPal Fee (3.77%):</b> $${paypalFee.toFixed(2)}<br>
+                💰 <b>Conversion Fee (1.89%):</b> $${conversionFee.toFixed(2)}<br>
+                🔁 <b>Piggyback Fee:</b> $${unpaidFee.toFixed(2)}<br>
+                💵 <b>Total Client Should Pay:</b> $${totalCharge.toFixed(2)}<br>
+                
+            `;
+
+            // Show result with animation
+            resultDiv.style.opacity = "1";
+            resultDiv.style.transform = "scale(1)";
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+    </script>
+
+</body>
+</html>
